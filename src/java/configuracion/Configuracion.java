@@ -68,6 +68,7 @@ public final class Configuracion {
     public static Configuracion getInstance(){
         if(configuracion == null){
             configuracion = new Configuracion();
+            configuracion.setCarpetaBase("C:\\Users\\Matías\\Desktop\\miCarpetaDePrueba\\motorDeBusqueda");
         }
         
         return configuracion;

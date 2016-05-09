@@ -22,6 +22,18 @@ function redimensionarContenedorResultados(){
     $(divResultados).height((altoPagina - divTop - 10) + "px");
 }
 
+function redimensionarContenedorTextoDocumento(){
+    var divTexto = $(".divContenedorTextoDocumento"),
+        altoPagina = $(window).height(),
+        anchoPagina = $(window).width();
+        
+        $(divTexto).width((anchoPagina/3) + "px");
+        var left = (anchoPagina) / 2 - $(divTexto).width() / 2;
+        
+    $(divTexto).height((altoPagina - 10) + "px");
+    $(divTexto).css({"left": (left + "px")});
+}
+
 function prepararAnimacionDeFondo(){
     $("#divVideoBackground2").css({"opacity": 0});
     
@@ -102,6 +114,7 @@ function sincronizarComienzosParadasDeVideos(){
 function agregarEventos(){
     $(window).on("resize", function(){
         redimensionarContenedorResultados(); 
+        redimensionarContenedorTextoDocumento();
     });
     
     $("#inputConsulta").on("keydown", function(event){
@@ -113,6 +126,12 @@ function agregarEventos(){
             });
         }
     });
+    
+    $("body").on("click", ".linkCierre", function(){
+        $(this).parent().parent().remove();
+    });
+    
+    agregarEventoSobreLinksDocumentos();
 }
 
 function mostrarDocumentosDevueltos(data){
@@ -187,8 +206,10 @@ function agregarNuevaFilaParaDocumento(JSONData){
         
         $(divURL).addClass("col-xs-4");
         $(divURL).addClass("resultado");
+        $(divURL).addClass("divLinkDocumento");
         $(divURL).append(linkURL);
         $(linkURL).attr("href", URL);
+        $(linkURL).addClass("linkDocumento");
         $(linkURL).append("LINK");
         
         $(divPuntaje).addClass("col-xs-4");
@@ -203,3 +224,43 @@ function agregarNuevaFilaParaDocumento(JSONData){
         $("#divResultados").append(divRow);
 }
 
+function agregarEventoSobreLinksDocumentos(){
+    
+    $("body").on("click", ".linkDocumento", function(event){
+       event.preventDefault();
+       var link = $(this).attr('href');
+       debugger;
+       $.post("/MotorDeBusqueda/lectorDocumento", { "URL": link})
+                    .done(function (data) {
+                        crearDivParaMostrarTextoDocumento(data);         
+            });
+    });
+}
+
+function crearDivParaMostrarTextoDocumento(texto){
+    var divTexto = document.createElement("div"),
+        parrafo = document.createElement("p"),
+        parrafoCierre = document.createElement("p"),
+        linkCierre = document.createElement("a"),
+        width = $(window).width(),
+        height = $(window).height(),
+        widthElement = width / 3,
+        left = widthElement;
+    
+    $(divTexto).addClass("divContenedorTextoDocumento");
+    $(divTexto).css({"left": left});
+    $(divTexto).css({"height": height * 0.9 + "px"});
+    $(divTexto).css({"width": widthElement + "px"});
+    
+    $(parrafoCierre).css({"text-align": "right"});
+    $(linkCierre).append("X");
+    $(linkCierre).attr("href", "#");
+    $(linkCierre).addClass("linkCierre");
+    $(parrafoCierre).append(linkCierre);
+    $(divTexto).append(parrafoCierre);
+    
+    $(parrafo).html(texto);
+    $(divTexto).append(parrafo);
+    
+    $("body").append(divTexto);
+}

@@ -68,6 +68,9 @@ body, html{
 }
 
 #divResultados{
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+    overflow-y: auto;
     background-color: gray;
     opacity: 0.8;
 }
@@ -98,7 +101,21 @@ body, html{
 .encabezadoResultado{
     text-align: center;
     text-decoration: underline;
+    text-overflow: ellipsis;
     font-size: 25px;
     font-weight: bolder;
     color: green;
+}
+
+.divContenedorTextoDocumento{
+    position: absolute;
+    background-color: white;
+    overflow-y: auto;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    top:0px;
+}
+
+.transparente{
+    opacity: 0.6;
 }

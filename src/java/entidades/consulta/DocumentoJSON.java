@@ -39,7 +39,7 @@ public class DocumentoJSON {
                 object.put("URL", "No tiene URL valida");
                 Logger.getLogger(DocumentoJSON.class.getName()).log(Level.SEVERE, null, ex);
             }
-            object.put("puntaje", documento.getPuntajeFrenteAConsulta());
+            object.put("puntaje", Math.round(documento.getPuntajeFrenteAConsulta()));
             
             return object;
         } catch (JSONException ex) {

@@ -39,7 +39,7 @@
             <%-- Titulo --%>
             <div class="row">
                 <div class="col-xs-12">
-                    <h1 id="TituloConsulta" class="text-center well">
+                    <h1 id="tituloConsulta" class="text-center well transparente">
                         CONSULTA
                     </h1>
                 </div>
@@ -64,7 +64,7 @@
                     
                 </div>
                 
-                <div id="divResultados" class="col-xs-10">
+                <div id="divResultados" class="col-xs-10 transparente">
                     <c:forEach items="${documentos}" var="d">
                         <div class="row">
                             <div class="col-xs-4">
