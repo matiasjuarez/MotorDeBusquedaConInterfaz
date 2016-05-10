@@ -1,0 +1,76 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 10/05/2016, 00:19:22
+    Author     : Matías
+*/
+
+html, body{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+body{
+    background-image: url("../resources/imagen/silentHill.jpg");
+    background-size: cover;
+}
+
+.oscuridad{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border: 2px solid black;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+}
+
+.oscuridadAparece{
+    animation-name: apareceOscuridad;
+    animation-duration: 20s;
+    animation-fill-mode:forwards;
+}
+
+@keyframes apareceOscuridad {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.oscuridadDesaparece{
+    animation-name: desapareceOscuridad;
+    animation-duration: 20s;
+    animation-fill-mode:forwards;
+}
+
+@keyframes desapareceOscuridad {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+.fire {
+        animation: burn 1.5s linear infinite alternate;
+        -webkit-animation: burn 1.5s linear infinite alternate;
+        -moz-animation: burn 1.5s linear infinite alternate;
+        -ms-animation: burn 1.5s linear infinite alternate;        
+	  }
+
+@keyframes burn {
+        from { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .4em #ffae34, .2em -.3em .3em #ec760c, -.2em -.4em .4em #cd4606, .1em -.5em .7em #973716, .1em -.7em .7em #451b0e; }
+        45%  { text-shadow: .1em -.2em .5em #fefcc9, .15em 0 .4em #feec85, -.1em -.25em .5em #ffae34, .15em -.45em .5em #ec760c, -.1em -.5em .6em #cd4606, 0 -.8em .6em #973716, .2em -1em .8em #451b0e; }
+        70%  { text-shadow: -.1em 0 .3em #fefcc9, .1em -.1em .3em #feec85, -.2em -.2em .6em #ffae34, .2em -.3em .4em #ec760c, -.2em -.4em .7em #cd4606, .1em -.5em .7em #973716, .1em -.7em .9em #451b0e; }
+        to   { text-shadow: -.1em -.2em .6em #fefcc9, -.15em 0 .6em #feec85, .1em -.25em .6em #ffae34, -.15em -.45em .5em #ec760c, .1em -.5em .6em #cd4606, 0 -.8em .6em #973716, -.2em -1em .8em #451b0e; }						
+}
+
+.divVideoContainer{
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+}

@@ -119,3 +119,7 @@ body, html{
 .transparente{
     opacity: 0.6;
 }
+
+.textoBoton{
+    font-weight: bolder;
+}

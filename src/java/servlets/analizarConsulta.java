@@ -44,7 +44,7 @@ public class analizarConsulta extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        response.setContentType("application/json;charset=UTF-8");
+        /*response.setContentType("application/json;charset=UTF-8");
         
         HttpSession session = request.getSession();
         
@@ -58,7 +58,7 @@ public class analizarConsulta extends HttpServlet {
         String jsonString = documentosJson.toString();
         PrintWriter pw = response.getWriter(); 
         pw.print(jsonString);
-        pw.close();
+        pw.close();*/
         /*request.setAttribute("documentos", documentosRelevantes);
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/PaginaConsulta.jsp");
@@ -77,7 +77,21 @@ public class analizarConsulta extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        response.setContentType("text/html;charset=UTF-8");
+        
+        HttpSession session = request.getSession();
+        
+        if(session.getAttribute("inicializado") == null){
+            inicializarVocabularioMapeo(request);
+        }
+        
+        ArrayList<Documento> documentosRelevantes = obtenerDocumentosRelevantes(request);
+
+        request.setAttribute("documentos", documentosRelevantes);
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/PaginaConsulta.jsp");
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -91,7 +105,22 @@ public class analizarConsulta extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        response.setContentType("application/json;charset=UTF-8");
+        
+        HttpSession session = request.getSession();
+        
+        if(session.getAttribute("inicializado") == null){
+            inicializarVocabularioMapeo(request);
+        }
+        
+        ArrayList<Documento> documentosRelevantes = obtenerDocumentosRelevantes(request);
+        JSONArray documentosJson = obtenerObjetosJSON(documentosRelevantes);
+        
+        String jsonString = documentosJson.toString();
+        PrintWriter pw = response.getWriter(); 
+        pw.print(jsonString);
+        pw.close();
     }
 
     /**
@@ -123,6 +152,9 @@ public class analizarConsulta extends HttpServlet {
         AnalizadorConsulta analizador = prepararAnalizadorConsulta(request);
         
         ArrayList<Documento> documentosRelevantes = analizador.analizarConsulta(consulta);
+        for(Documento documento: documentosRelevantes){
+            documento.setPuntajeFrenteAConsulta(Math.round(documento.getPuntajeFrenteAConsulta()));
+        }
         
         return documentosRelevantes;
     }

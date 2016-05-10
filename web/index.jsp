@@ -11,14 +11,49 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
         
-        <link rel="stylesheet" type="text/css" href="/MotorDeBusqueda/css/presentacionCompartida.css" />
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
 
         <script src="/MotorDeBusqueda/javascript/jquery.min.js"></script>
         <script src="/MotorDeBusqueda/javascript/snowstorm.js"></script>
-        <script src="/MotorDeBusqueda/javascript/fondoAnimado.js"></script>
-        <script src="/MotorDeBusqueda/javascript/init.js"></script>
+        <script src="javascript/index.js"></script>
+        
+
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <audio id="musicaOscuridad">
+            <source src="resources/audio/audioOscuridad.mp3" type="audio/mpeg"/>
+        </audio>
+        
+        <div class="container" id="divContainer">
+            
+            <%-- Titulo --%>
+            <div class="row" id="divBotones">
+                <div class="col-xs-4">
+                    
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <p class="text-center">
+                                ¿QUÉ DESEA HACER?
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <button type="button" id="botonConsulta" class="form-control">
+                                <span class="textoBoton">CONSULTAR</span>
+                            </button>
+                        </div>
+                        <div class="col-xs-6">
+                            <button type="button" id="botonRearmar" class="form-control">
+                                <span class="textoBoton">REARMAR</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
     </body>
 </html>

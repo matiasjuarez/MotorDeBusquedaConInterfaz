@@ -51,7 +51,18 @@
                 <div class="col-xs-3">
                 </div>
                 <div class="col-xs-6">
-                    <input type="text" id="inputConsulta" class="form-control" />
+                    <form action="/MotorDeBusqueda/analizarConsulta" method="GET" id="form1">
+                        <input type="text" id="inputConsulta" name = "consulta" class="form-control" />
+                    </form>
+                    <div class="row">
+                        <div class="col-xs-4"></div>
+                        <div class="col-xs-4">
+                            <button type="submit" form="form1" value="Submit" class="form-control">
+                                <span class="textoBoton">ENVIAR GET</span>
+                            </button>
+                        </div>
+                        <div class="col-xs-4"></div>
+                    </div>
                 </div>
                 <div class="col-xs-3">
                 </div>
@@ -65,18 +76,31 @@
                 </div>
                 
                 <div id="divResultados" class="col-xs-10 transparente">
+                    <div class="row filaResultados">
+                        <div class="col-xs-4 encabezadoResultado">
+                            <span>DOCUMENTO</span>
+                        </div>
+                        
+                        <div class="col-xs-4 encabezadoResultado">
+                            <span>CLICK PARA VER</span>
+                        </div>
+                        
+                        <div class="col-xs-4 encabezadoResultado">
+                            <span>PUNTAJE</span>
+                        </div>
+                    </div>
                     <c:forEach items="${documentos}" var="d">
-                        <div class="row">
-                            <div class="col-xs-4">
-                                <span>Nombre: ${d.nombre}</span>
+                        <div class="row filaResultados">
+                            <div class="col-xs-4 resultado">
+                                <span>${d.nombre}</span>
                             </div>
                             
-                            <div class="col-xs-4">
-                                <a href="${d.URL}">LINK</a>
+                            <div class="col-xs-4 resultado">
+                                <a href="${d.URL}" class="linkDocumento">LINK</a>
                             </div>
                             
-                            <div class="col-xs-4">
-                                <span>Puntaje: ${d.puntajeFrenteAConsulta}</span>
+                            <div class="col-xs-4 resultado">
+                                <span>${d.puntajeFrenteAConsulta}</span>
                             </div>
                         </div>
                     </c:forEach>

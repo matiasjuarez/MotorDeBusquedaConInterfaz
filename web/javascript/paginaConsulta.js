@@ -47,7 +47,7 @@ function prepararAnimacionDeFondo(){
 
 function comenzarLoopVideo(){
     var video = document.getElementById("backgroundVideo1");
-    video.currentTime = 7;
+    video.currentTime = 1;
     video.play();
 }
 
@@ -119,12 +119,23 @@ function agregarEventos(){
     
     $("#inputConsulta").on("keydown", function(event){
         if(event.which === 13){
+            event.preventDefault();
             debugger;
-            $.post("/MotorDeBusqueda/analizarConsulta", { consulta: $(this).val()})
+            $.ajax({
+                type: "POST",
+                url: "/MotorDeBusqueda/analizarConsulta",
+                data: { consulta: $(this).val()},
+                context: this,
+                success: mostrarDocumentosDevueltos
+              });
+            
+            /*$.post("/MotorDeBusqueda/analizarConsulta", { consulta: $(this).val()})
                     .done(function (data) {
                         mostrarDocumentosDevueltos(data);         
-            });
-        }
+            });*/
+        };
+            
+        
     });
     
     $("body").on("click", ".linkCierre", function(){
