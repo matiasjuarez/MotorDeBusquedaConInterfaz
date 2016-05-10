@@ -15,8 +15,18 @@ $(document).ready(function(){
 function agregarEventos(){
     
     $("#botonRearmar").click(function(){
+        comenzarAnalisisDeDocumentos();
         animarOscuridad(); 
     });
+}
+
+function comenzarAnalisisDeDocumentos(){
+    $.ajax({
+        type: "POST",
+        url: "/MotorDeBusqueda/armarEstructurasParaElMotor",
+        data: {},
+        context: this
+      });
 }
 
 function animarOscuridad(){
@@ -34,6 +44,8 @@ function animarOscuridad(){
         if(opacidad == 1){
             limpiarElementosPaginaPrincipal();
             ponerVideoNevadaDeFondo();
+            crearBarrarProgreso();
+            obtenerProgreso();
             
             $(divOscuridad).removeClass("oscuridadAparece");
             $(divOscuridad).addClass("oscuridadDesaparece");
@@ -42,9 +54,86 @@ function animarOscuridad(){
     }, 1000);
 }
 
+var analisisCompleto = false,
+    intervaloPeticionProgreso;
+function obtenerProgreso(){
+            analisisCompleto = false;
+    
+    intervaloPeticionProgreso = setInterval(function(){
+        $.ajax({
+            type: "POST",
+            url: "/MotorDeBusqueda/analizadorProgreso",
+            data: { analisisCompleto: analisisCompleto},
+            context: this,
+            success: mostrarProgreso
+          });
+    }, 1000);
+    
+}
+
+function crearBarrarProgreso(){
+     var divProgress = document.createElement("div"),
+        divBar = document.createElement("div");
+        
+        $(divProgress).addClass("progress");
+        $(divProgress).css({"position": "absolute", "left": "0px"});
+        $(divProgress).attr("id", "divContenedorBarraProgreso");
+        
+        $(divBar).addClass("progress-bar progress-bar-striped progress-bar-success active");
+        $(divBar).attr("role", "progressbar");
+        $(divBar).attr("id", "barraProgreso");
+        $(divBar).css("width", 0 + "%");
+        $(divBar).html(0);
+        
+        
+        $(divProgress).append(divBar);
+        
+        $("#divContainer").append(divProgress);
+        
+        centrarBarraDeProgreso();
+}
+
+function centrarBarraDeProgreso(){
+    var barra = $("#divContenedorBarraProgreso"),
+        height = $(window).height();
+
+        $(barra).css("top", (height / 2) + px);
+}
+
+function mostrarProgreso(data){
+    debugger;
+    var dataProgreso = data.progreso,
+            sinComas,
+            progreso,
+            barraProgreso = $("#barraProgreso");
+    
+    sinComas = dataProgreso.replace(",", ".");
+    
+    progreso = parseFloat(sinComas);
+    
+    if(progreso >= 1){
+        if(analisisCompleto = true){
+            clearInterval(intervaloPeticionProgreso);
+        }
+        progreso = 100;
+        $(barraProgreso).removeClass("progress-bar-success");
+        $(barraProgreso).addClass("progress-bar-danger");
+        analisisCompleto = true;
+        
+    }
+    else{
+        progreso = progreso * 100;
+    }
+    
+    $(barraProgreso).css("width", (progreso + "%"));
+    $(barraProgreso).html(progreso.toFixed(2));
+        
+    console.log(progreso);
+}
+
 function limpiarElementosPaginaPrincipal(){
     $("body").css("background-image", "none");
-    $("#divBotones").remove();
+    $("#divContainer").html("");
     MotorDeBusqueda.snowControlObject.pararNieve();
     MotorDeBusqueda.snowControlObject.limpiarNieve();
 }
@@ -62,6 +151,7 @@ function ponerVideoNevadaDeFondo(){
         $(video).append(source);
         
         $(divVideo).addClass("divVideoContainer");
+        $(divVideo).css("z-index", -1);
         $(divVideo).append(video);
         
         $("body").append(divVideo);

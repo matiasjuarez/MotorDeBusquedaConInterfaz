@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "armarEstructurasParaElMotor", urlPatterns = {"/armarEstructurasParaElMotor"})
 public class armarEstructurasParaElMotor extends HttpServlet {
     
-    private Configuracion configuracion = Configuracion.getInstance();
-    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -42,7 +40,7 @@ public class armarEstructurasParaElMotor extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         ServletContext sc = request.getServletContext();
         
-        configuracion.setCarpetaBase("C:\\Users\\Matías\\Desktop\\miCarpetaDePrueba\\motorDeBusqueda");
+        Configuracion configuracion = Configuracion.getInstance();
         
         long tiempoInicial = System.currentTimeMillis();
 

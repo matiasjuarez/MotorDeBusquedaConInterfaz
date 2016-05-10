@@ -5,13 +5,20 @@
  */
 package servlets;
 
+import configuracion.Configuracion;
+import entidades.analisisDeDocumentos.ManejadorDeCadenas;
+import entidades.documentos.Directorio;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -31,19 +38,30 @@ public class analizadorProgreso extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet analizadorProgreso</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet analizadorProgreso at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+       response.setContentType("application/json;charset=UTF-8");
+       
+       Configuracion configuracion = Configuracion.getInstance();
+       
+       float progreso;
+       
+       String analisis = request.getParameter("analisisCompleto");
+       if(analisis.equalsIgnoreCase("false")){
+            progreso = calcularProgresoAnalisis(configuracion);
+       }
+       else{
+           progreso = calcularProgresoArmado(configuracion);
+       }
+       
+       
+        
+        
+        String jsonString = obtenerJSONdelProgreso(progreso);
+        if(jsonString != null){
+            PrintWriter pw = response.getWriter(); 
+            pw.print(jsonString);
+            pw.close(); 
         }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -84,5 +102,70 @@ public class analizadorProgreso extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    private float calcularProgresoArmado(Configuracion configuracion){
+        try {
+            int caracteresValidos = ManejadorDeCadenas.caracteresValidos.length();
+            
+            String urlPosteos = configuracion.getCarpetaAlmacenamientoPosteos();
+            Directorio directorio = new Directorio(urlPosteos);
+            directorio.armarEstructuraDelDirectorio();
+            
+            int cantidadPosteos = directorio.getDocumentos().size();
+            
+            return cantidadPosteos/(float)caracteresValidos;
+        } catch (IOException ex) {
+            Logger.getLogger(analizadorProgreso.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
+    }
+    
+    private String obtenerJSONdelProgreso(float progreso){
+        try {
+            JSONObject json = new JSONObject();
+            json.put("progreso", String.format("%.2f", progreso));
+            String jsonString = json.toString();
+            return jsonString;
+        } catch (JSONException ex) {
+            String mensaje = "Algo salio mal al intentar crear el objeto json del progreso";
+            Logger.getLogger(analizadorProgreso.class.getName()).log(Level.SEVERE, mensaje, ex);
+            return null;
+        }
+    }
+    
+    private float calcularProgresoAnalisis(Configuracion configuracion){
+        int cantidadDocumentos = contarCantidadDeDocumentosAnalizar(configuracion);
+        int documentosPorLote = Configuracion.cantidadDeDocumentosPorLote;
 
+        int maximaCantidadLotes = cantidadDocumentos/documentosPorLote;
+
+        int actualCantidadLotes = contarCantidadLotesAnalizados(configuracion);
+        
+        return actualCantidadLotes/(float)maximaCantidadLotes;
+    }
+    
+    private int contarCantidadLotesAnalizados(Configuracion configuracion){
+        try {
+            String URLVocabulariosTemporales = configuracion.getCarpetaVocabulariosTemporales();
+            Directorio directorio = new Directorio(URLVocabulariosTemporales);
+            directorio.armarEstructuraDelDirectorio();
+            return directorio.getDocumentos().size();
+        } catch (IOException ex) {
+            String mensaje = "Algo salio mal mientras se intentaba contar la cantidad de vocabularios temporales";
+            Logger.getLogger(analizadorProgreso.class.getName()).log(Level.SEVERE, mensaje, ex);
+            return -1;
+        }
+    }
+    
+    private int contarCantidadDeDocumentosAnalizar(Configuracion configuracion){
+        try {
+            String URLDocumentos = configuracion.getCarpetaDeDocumentos();
+            Directorio directorio = new Directorio(URLDocumentos);
+            directorio.armarEstructuraDelDirectorio();
+            return directorio.getDocumentos().size();
+        } catch (IOException ex) {
+            String mensaje = "Algo salio mal mientras se intentaba contar la cantidad de documentos";
+            Logger.getLogger(analizadorProgreso.class.getName()).log(Level.SEVERE, mensaje, ex);
+            return -1;
+        }
+    }
 }

@@ -13,8 +13,9 @@
         
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
-
+        
         <script src="/MotorDeBusqueda/javascript/jquery.min.js"></script>
+        <script src="/MotorDeBusqueda/javascript/bootstrap.min.js"></script>
         <script src="/MotorDeBusqueda/javascript/snowstorm.js"></script>
         <script src="javascript/index.js"></script>
         
