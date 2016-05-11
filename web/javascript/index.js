@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-var MotorDeBusqueda = {};
+var MotorDeBusqueda = {},
+    etapaAnterior = -1,
+    intervaloPeticionProgreso;
+    
 
 $(document).ready(function(){
     MotorDeBusqueda.snowControlObject = new MotorDeBusqueda.snowControl(MotorDeBusqueda.snowStorm);
@@ -15,8 +18,9 @@ $(document).ready(function(){
 function agregarEventos(){
     
     $("#botonRearmar").click(function(){
-        comenzarAnalisisDeDocumentos();
         animarOscuridad(); 
+        comenzarAnalisisDeDocumentos();
+        console.log("botonRearmar");
     });
 }
 
@@ -47,17 +51,18 @@ function animarOscuridad(){
             crearBarrarProgreso();
             obtenerProgreso();
             
+            $("#videoNieve").removeClass("oculto");
             $(divOscuridad).removeClass("oscuridadAparece");
             $(divOscuridad).addClass("oscuridadDesaparece");
             clearInterval(interval);
         }
-    }, 1000);
+    }, 2000);
+    
 }
 
-var analisisCompleto = false,
-    intervaloPeticionProgreso;
+
 function obtenerProgreso(){
-            analisisCompleto = false;
+    analisisCompleto = false;
     
     intervaloPeticionProgreso = setInterval(function(){
         $.ajax({
@@ -73,11 +78,16 @@ function obtenerProgreso(){
 
 function crearBarrarProgreso(){
      var divProgress = document.createElement("div"),
-        divBar = document.createElement("div");
+        divBar = document.createElement("div"),
+        divRow = document.createElement("div");
+
+        $(divRow).addClass("row");
+        $(divRow).attr("id", "divContenedorBarraProgreso");
+        $(divRow).css({"position":"relative", "left": "0px"});
         
-        $(divProgress).addClass("progress");
-        $(divProgress).css({"position": "absolute", "left": "0px"});
-        $(divProgress).attr("id", "divContenedorBarraProgreso");
+        $(divProgress).addClass("progress col-xs-12");
+        $(divProgress).css({"width": (100 + "%"), "padding-right": 0 + "px", "padding-left": 0 + "px"});
+        
         
         $(divBar).addClass("progress-bar progress-bar-striped progress-bar-success active");
         $(divBar).attr("role", "progressbar");
@@ -87,8 +97,9 @@ function crearBarrarProgreso(){
         
         
         $(divProgress).append(divBar);
+        $(divRow).append(divProgress);
         
-        $("#divContainer").append(divProgress);
+        $("#divContainer").append(divRow);
         
         centrarBarraDeProgreso();
 }
@@ -97,38 +108,52 @@ function centrarBarraDeProgreso(){
     var barra = $("#divContenedorBarraProgreso"),
         height = $(window).height();
 
-        $(barra).css("top", (height / 2) + px);
+        $(barra).css("top", (height / 2) + "px");
 }
 
 function mostrarProgreso(data){
-    debugger;
+    
     var dataProgreso = data.progreso,
-            sinComas,
+        etapa = parseInt(data.etapa),
             progreso,
+            mensaje,
             barraProgreso = $("#barraProgreso");
     
-    sinComas = dataProgreso.replace(",", ".");
-    
-    progreso = parseFloat(sinComas);
-    
-    if(progreso >= 1){
-        if(analisisCompleto = true){
-            clearInterval(intervaloPeticionProgreso);
-        }
-        progreso = 100;
-        $(barraProgreso).removeClass("progress-bar-success");
-        $(barraProgreso).addClass("progress-bar-danger");
-        analisisCompleto = true;
-        
+    if(data.etapa == -1){
+        debugger;
     }
-    else{
-        progreso = progreso * 100;
+        //sinComas = dataProgreso.replace(",", ".");
+
+        //progreso = parseFloat(sinComas);
+        progreso = dataProgreso * 100;
+    
+        if(etapa == 0){
+            $(barraProgreso).addClass("progress-bar-success");
+            $(barraProgreso).removeClass("progress-bar-danger");
+        }
+        else if (etapa == 1){
+            $(barraProgreso).addClass("progress-bar-danger");
+            $(barraProgreso).removeClass("progress-bar-success");
+        }        
+    
+    
+    if(etapa == -1){
+        progreso = 100;
+        clearInterval(intervaloPeticionProgreso);
     }
     
     $(barraProgreso).css("width", (progreso + "%"));
-    $(barraProgreso).html(progreso.toFixed(2));
+    
+    if(etapa == 0){
+        mensaje = "Analizado: " + progreso.toFixed(2) + "%";
+    }
+    else if(etapa == 1 || etapa == -1){
+        mensaje = "Construido: " + progreso.toFixed(2) + "%";
+    }
+    
+    $(barraProgreso).html(mensaje);
         
-    console.log(progreso);
+    console.log(mensaje);
 }
 
 function limpiarElementosPaginaPrincipal(){
@@ -139,7 +164,7 @@ function limpiarElementosPaginaPrincipal(){
 }
 
 function ponerVideoNevadaDeFondo(){
-    var divVideo = document.createElement("div"),
+   var divVideo = document.createElement("div"),
         video = document.createElement("video"),
         source = document.createElement("source");
 
@@ -150,18 +175,19 @@ function ponerVideoNevadaDeFondo(){
         $(video).attr("loop", "loop");
         $(video).append(source);
         
+           
         $(divVideo).addClass("divVideoContainer");
         $(divVideo).css("z-index", -1);
         $(divVideo).append(video);
         
-        $("body").append(divVideo);
+        $("#divContainer").append(divVideo);
 }
 
 MotorDeBusqueda.snowControl = function(snowFunction){
         this.snowFunction = snowFunction;
         this.snowObject = null;
         
-        this.maximosCopos = 208;
+        this.maximosCopos = 300;
         this.coposActivos = this.maximosCopos/2;
         this.vMaxX = 3;
         this.vMaxY = 2; 
@@ -190,7 +216,7 @@ MotorDeBusqueda.snowControl = function(snowFunction){
                 this.snowObject = new this.snowFunction(window, document);
                 this.snowObject.flakesMaxActive = this.maximosCopos;
                 this.snowObject.flakesMax = this.coposActivos;
-                this.snowObject.snowColor = "#aaa";
+                this.snowObject.snowColor = "#888";
             }
         }
     };

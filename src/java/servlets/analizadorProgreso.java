@@ -17,6 +17,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,7 +27,14 @@ import org.json.JSONObject;
  */
 @WebServlet(name = "analizadorProgreso", urlPatterns = {"/analizadorProgreso"})
 public class analizadorProgreso extends HttpServlet {
+    
 
+
+private static final Configuracion configuracion = Configuracion.getInstance();
+private static final Directorio carpetaPosteos = 
+        new Directorio(configuracion.getCarpetaAlmacenamientoPosteos());
+private static final Directorio carpetaVocabularioTemporal = 
+        new Directorio(configuracion.getCarpetaVocabulariosTemporales());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -39,28 +47,25 @@ public class analizadorProgreso extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
        response.setContentType("application/json;charset=UTF-8");
+       int etapa = determinarEtapa(request.getSession()); // etapa 0 es analisis, 1 construccion, -1 ninguna
        
-       Configuracion configuracion = Configuracion.getInstance();
+       float progreso = -1;
        
-       float progreso;
-       
-       String analisis = request.getParameter("analisisCompleto");
-       if(analisis.equalsIgnoreCase("false")){
-            progreso = calcularProgresoAnalisis(configuracion);
+       if(etapa == 0){
+            progreso = calcularProgresoAnalisis();
        }
-       else{
-           progreso = calcularProgresoArmado(configuracion);
+       else if(etapa == 1){
+           progreso = calcularProgresoArmado();
        }
-       
-       
-        
-        
-        String jsonString = obtenerJSONdelProgreso(progreso);
+
+        String jsonString = obtenerJSONdelProgreso(progreso, etapa);
         if(jsonString != null){
             PrintWriter pw = response.getWriter(); 
             pw.print(jsonString);
             pw.close(); 
         }
+       
+        
         
     }
 
@@ -102,27 +107,44 @@ public class analizadorProgreso extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    private float calcularProgresoArmado(Configuracion configuracion){
+    private int determinarEtapa(HttpSession session){
+        String etapaActual = (String) session.getAttribute("etapa");
+        int etapaDevolver;
+        
+        if(etapaActual.equalsIgnoreCase("analisis")){
+            etapaDevolver = 0;
+        }
+        else if(etapaActual.equalsIgnoreCase("construccion")){
+            etapaDevolver = 1;
+        }
+        else{
+            etapaDevolver = -1;
+        }
+        return etapaDevolver;
+    }
+    
+    private float calcularProgresoArmado(){
         try {
             int caracteresValidos = ManejadorDeCadenas.caracteresValidos.length();
+
+            carpetaPosteos.armarEstructuraDelDirectorio();
             
-            String urlPosteos = configuracion.getCarpetaAlmacenamientoPosteos();
-            Directorio directorio = new Directorio(urlPosteos);
-            directorio.armarEstructuraDelDirectorio();
+            int cantidadPosteos = carpetaPosteos.getDocumentos().size();
             
-            int cantidadPosteos = directorio.getDocumentos().size();
+            float progreso = cantidadPosteos/(float)caracteresValidos;
             
-            return cantidadPosteos/(float)caracteresValidos;
+            return progreso;
         } catch (IOException ex) {
             Logger.getLogger(analizadorProgreso.class.getName()).log(Level.SEVERE, null, ex);
             return 0;
         }
     }
     
-    private String obtenerJSONdelProgreso(float progreso){
+    private String obtenerJSONdelProgreso(float progreso, int etapa){
         try {
             JSONObject json = new JSONObject();
-            json.put("progreso", String.format("%.2f", progreso));
+            json.put("progreso", progreso);
+            json.put("etapa", etapa);
             String jsonString = json.toString();
             return jsonString;
         } catch (JSONException ex) {
@@ -132,23 +154,23 @@ public class analizadorProgreso extends HttpServlet {
         }
     }
     
-    private float calcularProgresoAnalisis(Configuracion configuracion){
-        int cantidadDocumentos = contarCantidadDeDocumentosAnalizar(configuracion);
-        int documentosPorLote = Configuracion.cantidadDeDocumentosPorLote;
+    private float calcularProgresoAnalisis(){
+        int cantidadDocumentos = contarCantidadDeDocumentosAnalizar();
+        int documentosPorLote = configuracion.getCantidadDeDocumentosPorLote();
 
         int maximaCantidadLotes = cantidadDocumentos/documentosPorLote;
 
-        int actualCantidadLotes = contarCantidadLotesAnalizados(configuracion);
+        int actualCantidadLotes = contarCantidadLotesAnalizados();
         
-        return actualCantidadLotes/(float)maximaCantidadLotes;
+        float progreso = actualCantidadLotes/(float)maximaCantidadLotes;
+        
+        return progreso;
     }
     
-    private int contarCantidadLotesAnalizados(Configuracion configuracion){
+    private int contarCantidadLotesAnalizados(){
         try {
-            String URLVocabulariosTemporales = configuracion.getCarpetaVocabulariosTemporales();
-            Directorio directorio = new Directorio(URLVocabulariosTemporales);
-            directorio.armarEstructuraDelDirectorio();
-            return directorio.getDocumentos().size();
+            carpetaVocabularioTemporal.armarEstructuraDelDirectorio();
+            return carpetaVocabularioTemporal.getDocumentos().size();
         } catch (IOException ex) {
             String mensaje = "Algo salio mal mientras se intentaba contar la cantidad de vocabularios temporales";
             Logger.getLogger(analizadorProgreso.class.getName()).log(Level.SEVERE, mensaje, ex);
@@ -156,7 +178,7 @@ public class analizadorProgreso extends HttpServlet {
         }
     }
     
-    private int contarCantidadDeDocumentosAnalizar(Configuracion configuracion){
+    private int contarCantidadDeDocumentosAnalizar(){
         try {
             String URLDocumentos = configuracion.getCarpetaDeDocumentos();
             Directorio directorio = new Directorio(URLDocumentos);

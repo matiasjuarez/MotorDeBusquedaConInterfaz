@@ -39,6 +39,9 @@ public class Directorio {
     }
     
     public void armarEstructuraDelDirectorio() throws IOException{
+        documentos.clear();
+        subdirectorios.clear();
+        
         File file = new File(URL);
         
         if(file.isDirectory()){
@@ -71,6 +74,7 @@ public class Directorio {
             
             for(Documento documento: documentos){
                 File file = new File(documento.getAbsoluteURL());
+                file.setWritable(true);
                 file.delete();
             }
         } catch (IOException ex) {

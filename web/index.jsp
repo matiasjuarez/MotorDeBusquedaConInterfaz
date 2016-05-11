@@ -22,7 +22,7 @@
 
     </head>
     <body>
-        <audio id="musicaOscuridad">
+        <audio id="musicaOscuridad" class="oculto">
             <source src="resources/audio/audioOscuridad.mp3" type="audio/mpeg"/>
         </audio>
         

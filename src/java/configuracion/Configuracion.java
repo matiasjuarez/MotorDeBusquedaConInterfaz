@@ -5,8 +5,19 @@
  */
 package configuracion;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  *
@@ -16,10 +27,10 @@ public final class Configuracion {
     
     private static Configuracion configuracion;
     
-    public static final boolean USAR_MAPEO = true;
-    public static final int cantidadDeDocumentosPorLote = 10;
-    public static final int documentosAConsiderarPorListaDePosteo = 2;
-    public static final int documentosADevolverAnteConsulta = 5;
+    private boolean USAR_MAPEO;
+    private int cantidadDeDocumentosPorLote = 10;
+    private int documentosAConsiderarPorListaDePosteo = 2;
+    private int documentosADevolverAnteConsulta = 5;
     
     private String carpetaBase;
     
@@ -62,7 +73,24 @@ public final class Configuracion {
     public static final String marcaFrecuenciaPosteo = "f";
     
     private Configuracion(){
-        
+        try {
+            this.cargarConfiguracion();
+            
+            File carpetaBaseFile = new File(this.carpetaBase);
+            if(!carpetaBaseFile.exists()){
+                GestorEstructuraDeCarpetas gestor = new GestorEstructuraDeCarpetas();
+                try {
+                    gestor.construirEstructuraDeCarpetasParaElMotor();
+                } catch (IOException ex) {
+                    Logger.getLogger(Configuracion.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+        } catch (ExcepcionDeCreacionDeEstructuraDeMotor ex) {
+            Logger.getLogger(Configuracion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Configuracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public static Configuracion getInstance(){
@@ -98,7 +126,7 @@ public final class Configuracion {
     /**
      * @param carpetaBase the carpetaBase to set
      */
-    public void setCarpetaBase(String URLBase) {
+    private void setCarpetaBase(String URLBase) {
         this.carpetaBase = URLBase + "\\";
         
         this.carpetaResources = carpetaBase + "resources\\";
@@ -171,5 +199,93 @@ public final class Configuracion {
      */
     public String getCarpetaTemporales() {
         return carpetaTemporales;
+    }
+    
+    private void cargarConfiguracion() throws ExcepcionDeCreacionDeEstructuraDeMotor, FileNotFoundException{
+        try {
+            XMLInputFactory xmlif = ConfiguracionFabricasStax.getInputFactory();
+            
+            InputStream input = Configuracion.class.getResourceAsStream("configuracion.xml");
+            
+            BufferedReader reader = 
+                    new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
+            
+            XMLStreamReader xmlr = 
+                    xmlif.createXMLStreamReader(reader);
+                   
+            String urlBase = "";
+            String enableMapping = "";
+            String batchSize = "";
+            String documentsPerList = "";
+            String documentsPerQuery = "";
+            
+            while(xmlr.hasNext()){
+                xmlr.next();
+                if(xmlr.isStartElement()){
+                    String xmlrName = xmlr.getName().toString();
+                    
+                    if(xmlrName.equals("urlBase")){
+                        xmlr.next();
+                        urlBase = xmlr.getText();
+                    }
+                    else if(xmlrName.equals("enableMapping")){
+                        xmlr.next();
+                        enableMapping = xmlr.getText();
+                    }
+                    else if(xmlrName.equals("batchSize")){
+                        xmlr.next();
+                        batchSize = xmlr.getText();
+                    }
+                    else if(xmlrName.equals("documentsPerList")){
+                        xmlr.next();
+                        documentsPerList = xmlr.getText();
+                    }
+                    else if(xmlrName.equals("documentsPerQuery")){
+                        xmlr.next();
+                        documentsPerQuery = xmlr.getText();
+                    }
+                }
+                
+            }
+            xmlr.close();
+            
+            this.setCarpetaBase(urlBase);
+            USAR_MAPEO = Boolean.parseBoolean(enableMapping);
+            cantidadDeDocumentosPorLote = Integer.parseInt(batchSize);
+            documentosAConsiderarPorListaDePosteo = Integer.parseInt(documentsPerList);
+            documentosADevolverAnteConsulta = Integer.parseInt(documentsPerQuery);
+            
+        } catch (XMLStreamException ex) {
+            String mensaje = "El archivo de configuracion no tiene un formato correcto";
+            Logger.getLogger(Configuracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * @return the USAR_MAPEO
+     */
+    public boolean isUSAR_MAPEO() {
+        return USAR_MAPEO;
+    }
+
+    /**
+     * @return the cantidadDeDocumentosPorLote
+     */
+    public int getCantidadDeDocumentosPorLote() {
+        return cantidadDeDocumentosPorLote;
+    }
+    
+    /**
+     * @return the documentosAConsiderarPorListaDePosteo
+     */
+    public int getDocumentosAConsiderarPorListaDePosteo() {
+        return documentosAConsiderarPorListaDePosteo;
+    }
+
+    /**
+     * @return the documentosADevolverAnteConsulta
+     */
+    public int getDocumentosADevolverAnteConsulta() {
+        return documentosADevolverAnteConsulta;
     }
 }

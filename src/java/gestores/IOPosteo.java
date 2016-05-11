@@ -413,4 +413,78 @@ public abstract class IOPosteo {
             }
             return listasDePosteo; 
     }
+    
+    
+    
+    public static ArrayList<ListaDePosteo> importarListasDePosteoCompletaStax(String URLBusqueda) 
+            throws IOException, JDOMException{       
+
+        Documento documento = new Documento(URLBusqueda);
+        
+        ArrayList<ListaDePosteo> listasDePosteo = new ArrayList<>();
+        ListaDePosteo listaEnTrabajo = null;
+        ElementoListaDePosteo elementoEnTrabajo = null;
+        
+        try {
+            String URL = documento.getURL();
+            File file = new File(URL);
+            if(!file.exists()){
+                throw new IOException("No se encuentra el archivo para las listas de posteo. URL: " + URL);
+            }
+
+            XMLInputFactory xmlif = ConfiguracionFabricasStax.getInputFactory();
+
+            XMLStreamReader xmlr = xmlif.createXMLStreamReader(URL, new FileInputStream(file));
+
+            while(xmlr.hasNext()){
+                xmlr.next();
+                if(xmlr.isStartElement()){
+
+                    String xmlrName = xmlr.getName().toString();
+
+                    if(xmlrName.equals(Configuracion.marcaListaPosteo)){
+                        listaEnTrabajo = new ListaDePosteo();
+                    }
+                    else if(xmlrName.equals(Configuracion.marcaPalabraPosteo)){
+                        xmlr.next();
+                        String palabra = xmlr.getText();
+                        listaEnTrabajo.setPalabra(palabra);
+                    }
+
+                    if(xmlrName.equals(Configuracion.marcaElementoPosteo)){
+                        xmlr.next();
+                        elementoEnTrabajo = new ElementoListaDePosteo();
+                    }
+                    else if(xmlrName.equals(Configuracion.marcaURLDocumentoPosteo)){
+                        xmlr.next();
+                        elementoEnTrabajo.setURLDocumento(xmlr.getText());
+                    }
+                    else if(xmlrName.equals(Configuracion.marcaFrecuenciaPosteo)){
+                        xmlr.next();
+                        int f = Integer.parseInt(xmlr.getText());
+                        elementoEnTrabajo.setFrecuencia(f);
+                    }
+                    
+
+                }
+                else if(xmlr.isEndElement()){
+                    String endElement = xmlr.getName().toString();
+
+                    if(endElement.equals(Configuracion.marcaElementoPosteo)){
+                        listaEnTrabajo.insertarNuevoElemento(elementoEnTrabajo);
+                    }
+                    else if(endElement.equals(Configuracion.marcaListaPosteo)){
+                        listasDePosteo.add(listaEnTrabajo);
+                    }
+                }
+            }
+            
+            xmlr.close();
+            } catch (XMLStreamException ex) {
+                listasDePosteo = null;
+                System.out.println("El archivo del que intenta leer las listas de posteo no tiene el formato adecuado. URL: " + URLBusqueda);
+
+            }
+            return listasDePosteo; 
+    }
 }

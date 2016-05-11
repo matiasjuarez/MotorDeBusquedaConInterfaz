@@ -110,7 +110,7 @@ public class AnalizadorConsulta {
             Posteo posteo = new Posteo(letra);
             posteo.importarPosteo(
                     URLArchivoExterno.toString(), listaDePalabras, 
-                    Configuracion.documentosAConsiderarPorListaDePosteo);
+                    configuracion.getDocumentosAConsiderarPorListaDePosteo());
             
             posteos.add(posteo);
         }
@@ -239,7 +239,7 @@ public class AnalizadorConsulta {
         
         ArrayList<Documento> documentosDevolver = new ArrayList<>();
         int length = documentosRelevantes.size();
-        int maximosDocumentos = Configuracion.documentosADevolverAnteConsulta;
+        int maximosDocumentos = configuracion.getDocumentosADevolverAnteConsulta();
         
         for(int i = 0; i < length && i < maximosDocumentos; i++){
             documentosDevolver.add(documentosRelevantes.get(i));

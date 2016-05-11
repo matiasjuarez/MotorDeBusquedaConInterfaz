@@ -132,7 +132,7 @@ public class Posteo {
     public boolean importarPosteo(String URLImportacion){
         try {
             ArrayList<ListaDePosteo> posteoListas =
-                    IOPosteo.importarListasDePosteoStax(URLImportacion, null, -1);
+                    IOPosteo.importarListasDePosteoCompletaStax(URLImportacion);
                     //IOPosteo.importarListasDePosteoSAX(Configuracion.URLAlmacenamientoPosteos, letra);
             
             for(ListaDePosteo lista: posteoListas) {

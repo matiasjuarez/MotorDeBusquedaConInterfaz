@@ -6,18 +6,21 @@
 package servlets;
 
 import configuracion.Configuracion;
+import configuracion.GestorEstructuraDeCarpetas;
 import entidades.analisisDeDocumentos.AnalizadorDocumentos;
 import entidades.documentos.Directorio;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.jms.Session;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -26,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "armarEstructurasParaElMotor", urlPatterns = {"/armarEstructurasParaElMotor"})
 public class armarEstructurasParaElMotor extends HttpServlet {
     
+    private static boolean analisisEnCurso = false;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -40,20 +44,32 @@ public class armarEstructurasParaElMotor extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         ServletContext sc = request.getServletContext();
         
-        Configuracion configuracion = Configuracion.getInstance();
+        HttpSession session = request.getSession();
         
-        long tiempoInicial = System.currentTimeMillis();
+        if(!analisisEnCurso){
+            analisisEnCurso = true;
+            
+            Configuracion configuracion = Configuracion.getInstance();
+            
+            limpiarArchivos(true, true);
 
-        gestores.GestorEstructuraDeCarpetas.limpiarArchivosTemporales();
-        gestores.GestorEstructuraDeCarpetas.limpiarArchivosDeTrabajoDelMotor();
-        AnalizadorDocumentos.procesarDocumentosDeDirectorio(configuracion.getCarpetaDeDocumentos());
-        
-        long tiempoFinal = System.currentTimeMillis();
-        
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.print("<h1>El programa tardo: " + (tiempoFinal - tiempoInicial) + " milisegundos</h1>");
+            AnalizadorDocumentos.
+                    procesarDocumentosDeDirectorio(configuracion.getCarpetaDeDocumentos(), session);
+
+            analisisEnCurso = false;
+            
+            limpiarArchivos(true, false);
         }
+        
+    }
+    
+    private static void limpiarArchivos(boolean temporales, boolean trabajo){
+        System.gc();
+            if(temporales)
+            GestorEstructuraDeCarpetas.limpiarArchivosTemporales();
+            
+            if(trabajo)
+            GestorEstructuraDeCarpetas.limpiarArchivosDeTrabajoDelMotor();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

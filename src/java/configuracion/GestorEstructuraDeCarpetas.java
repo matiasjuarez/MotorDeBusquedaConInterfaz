@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gestores;
+package configuracion;
 
 import entidades.documentos.Directorio;
 import java.io.IOException;
@@ -48,8 +48,12 @@ public class GestorEstructuraDeCarpetas {
         File vocabularioGeneral = new File(configuracion.getURLVocabularioGeneral());
         File mapeador = new File(configuracion.getURLmapeador());
         
+        vocabularioGeneral.setWritable(true);
         vocabularioGeneral.delete();
+        
+        mapeador.setWritable(true);
         mapeador.delete();
+        
         directorioPosteos.eliminarDocumentosDelDirectorio();
     }
     

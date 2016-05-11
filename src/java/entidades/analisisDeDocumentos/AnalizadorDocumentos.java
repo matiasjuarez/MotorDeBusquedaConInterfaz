@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -25,18 +26,24 @@ import java.util.logging.Logger;
 public class AnalizadorDocumentos {
     private static final Configuracion configuracion = Configuracion.getInstance();
     
-    public static void procesarDocumentosDeDirectorio(String URLDirectorio){
+    public static void procesarDocumentosDeDirectorio(String URLDirectorio, HttpSession session){
         try {
             Directorio directorio = new Directorio(URLDirectorio);
             directorio.armarEstructuraDelDirectorio();
             ArrayList<Documento> documentos = directorio.getDocumentos();
             ArrayList<ArrayList<Documento>> lotes = dividirDocumentosEnLotes(documentos);
             
+            session.setAttribute("etapa", "analisis");
+            
             for(int i = 0; i < lotes.size(); i++){
                 procesarLote(lotes.get(i), i);
             }
             
+            session.setAttribute("etapa", "construccion");
+            
             unirArchivosTemporales();
+            
+            session.setAttribute("etapa", "ninguna");
             
         } catch (IOException ex) {
             Logger.getLogger(AnalizadorDocumentos.class.getName()).log(Level.SEVERE, null, ex);
@@ -48,26 +55,13 @@ public class AnalizadorDocumentos {
         // VOCABULARIO
         VocabularioGeneral vocabulario = unirVocabulariosTemporalesConVocabularioPrincipal();
         vocabulario.exportarVocabulario(configuracion.getURLVocabularioGeneral());
-        vocabulario.limpiarVocabulario();
         
         // MAPEADOR
         MapeadorDeURLs mapeador = unirMapeadoresTemporalesConMapeadorPrincipal();
         mapeador.exportarMapeador(configuracion.getURLmapeador());
-        mapeador.limpiarMapeos();
         
         // POSTEO
         unirPosteosTemporalesConPosteoPrincipal();
-        /*StringBuilder stringBuilder;
-        String carpetaPosteos = configuracion.getCarpetaAlmacenamientoPosteos();
-        for(Posteo posteoPorLetra: posteosPorLetra){
-            stringBuilder = new StringBuilder();
-            stringBuilder.append(carpetaPosteos);
-            stringBuilder.append(posteoPorLetra.getLetra());
-            stringBuilder.append(".xml");
-            
-            posteoPorLetra.exportarPosteo(stringBuilder.toString() , true);
-        }*/
-        limpiarArchivosTemporales();
     }
     
     private static void limpiarArchivosTemporales(){
@@ -262,7 +256,7 @@ public class AnalizadorDocumentos {
         
         ArrayList<Documento> nuevoLote = new ArrayList<>();
         int cantidadDocumentosAgregado = 0;
-        int cantidadDocumentosMaxima = Configuracion.cantidadDeDocumentosPorLote;
+        int cantidadDocumentosMaxima = configuracion.getCantidadDeDocumentosPorLote();
         
         for(Documento documento: documentos){
             

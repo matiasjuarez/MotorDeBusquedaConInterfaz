@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<urlBase>C:\Users\Matías\Desktop\miCarpetaDePrueba\motorDeBusqueda</urlBase>
+	<enableMapping>true</enableMapping>
+	<batchSize>10</batchSize>
+	<documentsPerList>2</documentsPerList>
+	<documentsPerQuery>5</documentsPerQuery>
+</configuration>

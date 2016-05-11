@@ -32,7 +32,7 @@ body{
 
 .oscuridadAparece{
     animation-name: apareceOscuridad;
-    animation-duration: 3s;
+    animation-duration: 20s;
     animation-fill-mode:forwards;
 }
 
@@ -43,7 +43,7 @@ body{
 
 .oscuridadDesaparece{
     animation-name: desapareceOscuridad;
-    animation-duration: 3s;
+    animation-duration: 20s;
     animation-fill-mode:forwards;
 }
 
@@ -73,4 +73,12 @@ body{
     height: 100%;
     width: 100%;
     background-color: black;
+}
+
+.progress{
+    height: 40px;
+}
+
+.oculto{
+    display: none;
 }

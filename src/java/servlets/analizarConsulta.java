@@ -174,7 +174,6 @@ public class analizarConsulta extends HttpServlet {
         HttpSession session = request.getSession();
 
         Configuracion configuracion = Configuracion.getInstance();
-        configuracion.setCarpetaBase("C:\\Users\\Matías\\Desktop\\miCarpetaDePrueba\\motorDeBusqueda");
         
         VocabularioGeneral vocabulario = (VocabularioGeneral) session.getAttribute("vocabulario");
         MapeadorDeURLs mapeador = (MapeadorDeURLs)session.getAttribute("mapeador");
