@@ -19,34 +19,6 @@ body{
     background-size: cover;
 }
 
-.oscuridad{
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    border: 2px solid black;
-    background-color: black;
-    width: 100%;
-    height: 100%;
-    z-index: 5;
-}
-
-.oscuridadAparece{
-    animation-name: apareceOscuridad;
-    animation-duration: 20s;
-    animation-fill-mode:forwards;
-}
-
-@keyframes apareceOscuridad {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-.oscuridadDesaparece{
-    animation-name: desapareceOscuridad;
-    animation-duration: 20s;
-    animation-fill-mode:forwards;
-}
-
 @keyframes desapareceOscuridad {
     from {opacity: 1;}
     to {opacity: 0;}
@@ -79,6 +51,58 @@ body{
     height: 40px;
 }
 
-.oculto{
-    display: none;
+@keyframes parpadear{
+    from{opacity: 1;}
+    to {opacity: 0.4;}
+}
+
+.parpadeante{
+    animation-name: parpadear;
+    animation-duration: 2s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+
+@keyframes temblar{
+    0%{top: 0px}
+    10%{top: 2px}
+    20%{top: 1px}
+    30%{top: -2px}
+    40%{top: -5px}
+    50%{top: -1px}
+    60%{top: -3px}
+    70%{top: 4px}
+    80%{top: 1px}
+    90%{top: -3px}
+    100%{top: 0px}
+}
+
+.terremoto{
+    position: relative;
+    animation-name: temblar;
+    animation-duration: 2s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+
+.botonDeshabilitado{
+    color: lightgray;
+    text-decoration: line-through;
+}
+
+@keyframes blink{
+    from{background-color: white;}
+    to{background-color: yellow;}
+}
+
+.blinkButton{
+    animation-name: blink;
+    animation-duration: 1s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+
+.verticalCenter{
+    display: inline-block;
+    vertical-align: middle;
 }

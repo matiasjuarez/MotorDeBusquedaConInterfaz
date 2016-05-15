@@ -12,15 +12,35 @@ $(document).ready(function(){
     MotorDeBusqueda.snowControlObject = new MotorDeBusqueda.snowControl(MotorDeBusqueda.snowStorm);
     MotorDeBusqueda.snowControlObject.inicializarNevada();
     
+    setWindVolume(0.3);
+    
     agregarEventos();
 });
 
+function setWindVolume(volume){
+    var wind = $("#viento"),
+        audio = wind[0];
+    audio.volume = volume;
+}
+
+
 function agregarEventos(){
+    $(window).on("resize", function(){
+        centrarBarraDeProgreso();
+    });
     
     $("#botonRearmar").click(function(){
         animarOscuridad(); 
         comenzarAnalisisDeDocumentos();
         console.log("botonRearmar");
+    });
+    
+    $("#botonConsultaNotReady").click(function(){
+        $("#botonRearmar").addClass("blinkButton");
+    });
+    
+    $("#butonConsulta").click(function(){
+        
     });
 }
 
@@ -34,10 +54,8 @@ function comenzarAnalisisDeDocumentos(){
 }
 
 function animarOscuridad(){
-    var divOscuridad = document.createElement("div");
-    $("body").append(divOscuridad);
-    $(divOscuridad).addClass("oscuridad");
-    $(divOscuridad).addClass("oscuridadAparece");
+    $("#divOscuridad").addClass("oscuridadAparece");
+    $("#divOscuridad").removeClass("oculto");
     
     var musica = document.getElementById("musicaOscuridad");
     musica.play();
@@ -46,18 +64,22 @@ function animarOscuridad(){
         var opacidad = $(divOscuridad).css("opacity");
         console.log(opacidad);
         if(opacidad == 1){
-            limpiarElementosPaginaPrincipal();
-            ponerVideoNevadaDeFondo();
-            crearBarrarProgreso();
-            obtenerProgreso();
-            
-            $("#videoNieve").removeClass("oculto");
-            $(divOscuridad).removeClass("oscuridadAparece");
-            $(divOscuridad).addClass("oscuridadDesaparece");
+            animarFinOscuridad();
             clearInterval(interval);
         }
-    }, 2000);
+    }, 1000);
     
+}
+
+function animarFinOscuridad(){
+    limpiarElementosPaginaPrincipal();
+    ponerVideoNevadaDeFondo();
+    crearBarrarProgreso();
+    obtenerProgreso();
+
+    $("#videoNieve").removeClass("oculto");
+    $("#divOscuridad").removeClass("oscuridadAparece");
+    $("#divOscuridad").addClass("oscuridadDesaparece");
 }
 
 
@@ -89,7 +111,8 @@ function crearBarrarProgreso(){
         $(divProgress).css({"width": (100 + "%"), "padding-right": 0 + "px", "padding-left": 0 + "px"});
         
         
-        $(divBar).addClass("progress-bar progress-bar-striped progress-bar-success active");
+        $(divBar).addClass("progress-bar progress-bar-striped progress-bar-success active text-size30 text-creepy verticalCenter");
+        $(divBar).attr("aria-valuemax", 100);
         $(divBar).attr("role", "progressbar");
         $(divBar).attr("id", "barraProgreso");
         $(divBar).css("width", 0 + "%");
@@ -140,6 +163,7 @@ function mostrarProgreso(data){
     if(etapa == -1){
         progreso = 100;
         clearInterval(intervaloPeticionProgreso);
+        animarFinConstruccionMotor();
     }
     
     $(barraProgreso).css("width", (progreso + "%"));
@@ -154,6 +178,51 @@ function mostrarProgreso(data){
     $(barraProgreso).html(mensaje);
         
     console.log(mensaje);
+}
+
+function animarFinConstruccionMotor(){
+    $("#divOscuridad").removeClass("oscuridadDesaparece");
+    $("#divOscuridad").addClass("oscuridadApareceRapido");
+    
+    disminuirVolumenGradualmente(3);
+    var interval = setInterval(function(){
+        var opacidad = $("#divOscuridad").css("opacity");
+        console.log(opacidad);
+        if(opacidad == 1){
+            clearInterval(interval);
+            window.location = "/MotorDeBusqueda/PaginaConsulta.jsp";
+        }
+    }, 1000);
+}
+
+function disminuirVolumenGradualmente(tiempo){
+    debugger;
+    var disminucionesPorSegundo = 10,
+        audioViento = $("#viento")[0],
+        musicaOscuridad = $("#musicaOscuridad")[0],
+        disminucionViento = (audioViento.volume/tiempo)/disminucionesPorSegundo,
+        disminucionMusicaOscuridad = (musicaOscuridad.volume/tiempo)/disminucionesPorSegundo,
+        vientoVolume,
+        musicaOscuridadVolume;
+
+    setInterval(function(){
+        debugger;
+        vientoVolume = audioViento.volume;
+        vientoVolume -= disminucionViento;
+        if(vientoVolume < 0){
+            vientoVolume = 0;
+        }
+        audioViento.volume = vientoVolume;
+        
+        
+        musicaOscuridadVolume = musicaOscuridad.volume;
+        musicaOscuridadVolume -= disminucionMusicaOscuridad;
+        if(musicaOscuridadVolume < 0){
+            musicaOscuridadVolume = 0;
+        }
+        musicaOscuridad.volume = musicaOscuridadVolume;
+        console.log(musicaOscuridadVolume);
+    }, 1000/disminucionesPorSegundo);
 }
 
 function limpiarElementosPaginaPrincipal(){

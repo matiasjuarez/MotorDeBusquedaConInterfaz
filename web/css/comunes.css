@@ -1,0 +1,73 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 15/05/2016, 07:39:42
+    Author     : Matías
+*/
+
+.oscuridad{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border: 2px solid black;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+}
+
+.oscuridadAparece{
+    animation-name: apareceOscuridad;
+    animation-duration: 20s;
+    animation-fill-mode:forwards;
+}
+
+.oscuridadApareceRapido{
+    animation-name: apareceOscuridad;
+    animation-duration: 4s;
+    animation-fill-mode:forwards;
+}
+
+@keyframes apareceOscuridad {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.oscuridadDesaparece{
+    animation-name: desapareceOscuridad;
+    animation-duration: 20s;
+    animation-fill-mode:forwards;
+}
+
+.oscuridadDesapareceRapido{
+    animation-name: desapareceOscuridad;
+    animation-duration: 3s;
+    animation-fill-mode:forwards;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes desapareceOscuridad {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+@font-face{
+    font-family: silentHill1;
+    
+    src: url(../resources/font/silent_hill/SLNTHLE.ttf);
+}
+
+.text-creepy{
+    font-family: silentHill1;
+}
+
+.text-size30{
+    font-size: 30px;
+}
+
+.oculto{
+    display: none;
+}

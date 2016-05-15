@@ -12,7 +12,21 @@ $(document).ready(function(){
     
     prepararAnimacionDeFondo();
     
+    quitarDivOscuridad();
 });
+
+function quitarDivOscuridad(){
+    var div = $("#divOscuridad"),
+    opacity;
+    
+    var intervalo = setInterval(function(){
+        opacity = $(div).css("opacity");
+        if(opacity == 0){
+            $(div).addClass("oculto");
+            clearInterval(intervalo);
+        }
+    }, 100);
+}
 
 function redimensionarContenedorResultados(){
     var divResultados = $("#divResultados"),
@@ -169,18 +183,15 @@ function agregarEncabezados(){
         $(divRow).addClass("row");
         $(divRow).addClass("filaResultados");
         
-        $(divNombre).addClass("col-xs-4");
-        $(divNombre).addClass("encabezadoResultado");
+        $(divNombre).addClass("col-xs-4 encabezadoResultado text-creepy");
         $(divNombre).append(spanNombre);
         $(spanNombre).html("DOCUMENTO");
-        
-        $(divURL).addClass("col-xs-4");
-        $(divURL).addClass("encabezadoResultado");
+
+        $(divURL).addClass("col-xs-4 encabezadoResultado text-creepy");
         $(divURL).append(spanURL);
         $(spanURL).html("CLICK PARA VER");
-        
-        $(divPuntaje).addClass("col-xs-4");
-        $(divPuntaje).addClass("encabezadoResultado");
+
+        $(divPuntaje).addClass("col-xs-4 encabezadoResultado text-creepy");
         $(divPuntaje).append(spanPuntaje);
         $(spanPuntaje).html("PUNTAJE");
         

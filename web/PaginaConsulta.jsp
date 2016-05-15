@@ -5,12 +5,14 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>CONSULTA</title>
         
+        <%@include file="estilosScripts.jsp" %>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
         <link rel="stylesheet" type="text/css" href="css/paginaConsulta.css" />
         
@@ -19,6 +21,7 @@
         
     </head>
     <body>
+        <div id="divOscuridad" class="oscuridad oscuridadDesapareceRapido"></div>
         
         <div id="divBackgroundVideo">
             <div id="divVideoBackground1" class="divVideoContainer">
@@ -38,11 +41,13 @@
             
             <%-- Titulo --%>
             <div class="row">
-                <div class="col-xs-12">
-                    <h1 id="tituloConsulta" class="text-center well transparente">
+                <div class="col-xs-1"></div>
+                <div class="col-xs-10">
+                    <h1 id="tituloConsulta" class="text-center well transparente text-creepy">
                         CONSULTA
                     </h1>
                 </div>
+                <div class="col-xs-1"></div>
             </div>
             
             
@@ -52,13 +57,13 @@
                 </div>
                 <div class="col-xs-6">
                     <form action="/MotorDeBusqueda/analizarConsulta" method="GET" id="form1">
-                        <input type="text" id="inputConsulta" name = "consulta" class="form-control" />
+                        <input type="text" id="inputConsulta" name = "consulta" class="form-control text-creepy" />
                     </form>
                     <div class="row">
                         <div class="col-xs-4"></div>
                         <div class="col-xs-4">
                             <button type="submit" form="form1" value="Submit" class="form-control">
-                                <span class="textoBoton">ENVIAR GET</span>
+                                <span class="textoBoton  text-creepy">ENVIAR GET</span>
                             </button>
                         </div>
                         <div class="col-xs-4"></div>
@@ -77,15 +82,15 @@
                 
                 <div id="divResultados" class="col-xs-10 transparente">
                     <div class="row filaResultados">
-                        <div class="col-xs-4 encabezadoResultado">
+                        <div class="col-xs-4 encabezadoResultado text-creepy">
                             <span>DOCUMENTO</span>
                         </div>
                         
-                        <div class="col-xs-4 encabezadoResultado">
+                        <div class="col-xs-4 encabezadoResultado text-creepy">
                             <span>CLICK PARA VER</span>
                         </div>
                         
-                        <div class="col-xs-4 encabezadoResultado">
+                        <div class="col-xs-4 encabezadoResultado text-creepy">
                             <span>PUNTAJE</span>
                         </div>
                     </div>
