@@ -47,6 +47,7 @@ public class armarEstructurasParaElMotor extends HttpServlet {
         HttpSession session = request.getSession();
         
         if(!analisisEnCurso){
+            
             analisisEnCurso = true;
             
             Configuracion configuracion = Configuracion.getInstance();
@@ -57,6 +58,8 @@ public class armarEstructurasParaElMotor extends HttpServlet {
                     procesarDocumentosDeDirectorio(configuracion.getCarpetaDeDocumentos(), session);
 
             analisisEnCurso = false;
+            
+            analizadorProgreso.limpiarCantidadDocumentosAnalizar();
             
             limpiarArchivos(true, false);
         }
@@ -71,7 +74,7 @@ public class armarEstructurasParaElMotor extends HttpServlet {
             if(trabajo)
             GestorEstructuraDeCarpetas.limpiarArchivosDeTrabajoDelMotor();
     }
-
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

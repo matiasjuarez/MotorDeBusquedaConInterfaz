@@ -35,6 +35,9 @@ private static final Directorio carpetaPosteos =
         new Directorio(configuracion.getCarpetaAlmacenamientoPosteos());
 private static final Directorio carpetaVocabularioTemporal = 
         new Directorio(configuracion.getCarpetaVocabulariosTemporales());
+
+private static int cantidadDocumentosAnalizar = -1;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -107,6 +110,11 @@ private static final Directorio carpetaVocabularioTemporal =
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    
+    public static void limpiarCantidadDocumentosAnalizar(){
+        cantidadDocumentosAnalizar = -1;
+    }
+    
     private int determinarEtapa(HttpSession session){
         String etapaActual = (String) session.getAttribute("etapa");
         int etapaDevolver;
@@ -155,10 +163,13 @@ private static final Directorio carpetaVocabularioTemporal =
     }
     
     private float calcularProgresoAnalisis(){
-        int cantidadDocumentos = contarCantidadDeDocumentosAnalizar();
+        if(cantidadDocumentosAnalizar < 0){
+            cantidadDocumentosAnalizar = contarCantidadDeDocumentosAnalizar();
+        }
+        
         int documentosPorLote = configuracion.getCantidadDeDocumentosPorLote();
         
-        Double d = new Double(Math.ceil(cantidadDocumentos/(float)documentosPorLote));
+        Double d = (Math.ceil(cantidadDocumentosAnalizar/(float)documentosPorLote));
         int maximaCantidadLotes = d.intValue();
 
         int actualCantidadLotes = contarCantidadLotesAnalizados();

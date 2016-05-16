@@ -21,7 +21,7 @@ and open the template in the editor.
 
 .oscuridadAparece{
     animation-name: apareceOscuridad;
-    animation-duration: 20s;
+    animation-duration: 15s;
     animation-fill-mode:forwards;
 }
 
@@ -38,7 +38,7 @@ and open the template in the editor.
 
 .oscuridadDesaparece{
     animation-name: desapareceOscuridad;
-    animation-duration: 20s;
+    animation-duration: 15s;
     animation-fill-mode:forwards;
 }
 

@@ -180,8 +180,8 @@ function mostrarProgreso(data){
             $(barraProgreso).addClass("progress-bar-success");
             $(barraProgreso).removeClass("progress-bar-danger");
         }
-        else if (etapa == 1){
-            $(barraProgreso).addClass("progress-bar-danger");
+        else if (etapa == 1 || etapa == -1){
+            $(barraProgreso).addClass("progress-bar-warning");
             $(barraProgreso).removeClass("progress-bar-success");
         }        
     
