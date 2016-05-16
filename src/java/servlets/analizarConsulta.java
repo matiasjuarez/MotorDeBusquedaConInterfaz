@@ -110,7 +110,7 @@ public class analizarConsulta extends HttpServlet {
         
         HttpSession session = request.getSession();
         
-        if(session.getAttribute("inicializado") == null){
+        if(session.getAttribute("vocabulario") == null || session.getAttribute("mapeador") == null){
             inicializarVocabularioMapeo(request);
         }
         

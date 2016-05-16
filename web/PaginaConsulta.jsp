@@ -13,15 +13,19 @@
         <title>CONSULTA</title>
         
         <%@include file="estilosScripts.jsp" %>
+        
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
         <link rel="stylesheet" type="text/css" href="css/paginaConsulta.css" />
         
         <script src="/MotorDeBusqueda/javascript/jquery.min.js"></script>
         <script src="javascript/paginaConsulta.js"></script>
-        
     </head>
     <body>
         <div id="divOscuridad" class="oscuridad oscuridadDesapareceRapido"></div>
+        
+        <audio autoplay="autoplay" loop="loop" id="soundFire">
+            <source src="resources/audio/lavaSound.mp3" type="audio/mpeg"/>
+        </audio>
         
         <div id="divBackgroundVideo">
             <div id="divVideoBackground1" class="divVideoContainer">

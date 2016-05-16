@@ -44,7 +44,7 @@ and open the template in the editor.
 
 .oscuridadDesapareceRapido{
     animation-name: desapareceOscuridad;
-    animation-duration: 3s;
+    animation-duration: 1s;
     animation-fill-mode:forwards;
     animation-timing-function: ease-in-out;
 }
@@ -68,6 +68,16 @@ and open the template in the editor.
     font-size: 30px;
 }
 
+.text-size20{
+    font-size: 20px;
+}
+
 .oculto{
     display: none;
+}
+
+.audioControl{
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }

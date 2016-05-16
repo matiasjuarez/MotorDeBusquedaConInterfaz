@@ -52,9 +52,9 @@
                             <%boolean sePuedeHacerConsulta = Index.sePuedeRealizarConsulta();
                             
                             if(sePuedeHacerConsulta){%>
-                                <a href="/MotorDeBusqueda/PaginaConsulta.jsp" id="botonConsulta" class="form-control btn btn-default textoBoton  text-creepy">
+                                <button type="button" id="botonConsulta" class="form-control textoBoton  text-creepy">
                                     CONSULTAR
-                                </a>
+                                </button>
                             <%}
                             else{                             
                             %>

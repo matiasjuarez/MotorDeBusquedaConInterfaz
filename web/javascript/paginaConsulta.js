@@ -13,7 +13,24 @@ $(document).ready(function(){
     prepararAnimacionDeFondo();
     
     quitarDivOscuridad();
+    
+    modificarVolumenFuego();
+    
+    agregarBotonPausarAudio();
 });
+
+function agregarBotonPausarAudio(){
+    
+    var pauseButton = new PauseButton(),
+        domElement = pauseButton.getDomElement();
+    
+    $("body").append(domElement);
+}
+
+function modificarVolumenFuego(){
+    var sonidoFuego = $("#soundFire")[0];
+        sonidoFuego.volume = 0.8;
+}
 
 function quitarDivOscuridad(){
     var div = $("#divOscuridad"),
@@ -54,7 +71,7 @@ function prepararAnimacionDeFondo(){
     comenzarLoopVideo();
     
     sincronizarComienzosParadasDeVideos();
-   /* debugger;
+   /* 
     addEndEventToVideos("backgroundVideo1", "backgroundVideo2", "divVideo1", "divVideo2");
     addEndEventToVideos("backgroundVideo2", "backgroundVideo1", "divVideo2", "divVideo1");*/
 }
@@ -134,7 +151,7 @@ function agregarEventos(){
     $("#inputConsulta").on("keydown", function(event){
         if(event.which === 13){
             event.preventDefault();
-            debugger;
+            
             $.ajax({
                 type: "POST",
                 url: "/MotorDeBusqueda/analizarConsulta",
@@ -159,6 +176,10 @@ function agregarEventos(){
     agregarEventoSobreLinksDocumentos();
 }
 
+function descargarDocumento(data){
+    
+}
+
 function mostrarDocumentosDevueltos(data){
     var i = 0,
         length = data.length;
@@ -179,7 +200,7 @@ function agregarEncabezados(){
         spanNombre = document.createElement("span"),
         spanURL = document.createElement("span"),
         spanPuntaje = document.createElement("span");
-        debugger;
+        
         $(divRow).addClass("row");
         $(divRow).addClass("filaResultados");
         
@@ -217,7 +238,7 @@ function agregarNuevaFilaParaDocumento(JSONData){
         spanNombre = document.createElement("span"),
         linkURL = document.createElement("a"),
         spanPuntaje = document.createElement("span");
-        debugger;
+        
         $(divRow).addClass("row");
         $(divRow).addClass("filaResultados");
         
@@ -251,11 +272,20 @@ function agregarEventoSobreLinksDocumentos(){
     $("body").on("click", ".linkDocumento", function(event){
        event.preventDefault();
        var link = $(this).attr('href');
-       debugger;
+       
+       
        $.post("/MotorDeBusqueda/lectorDocumento", { "URL": link})
                     .done(function (data) {
                         crearDivParaMostrarTextoDocumento(data);         
             });
+            /*
+        $.ajax({
+                type: "POST",
+                url: "/MotorDeBusqueda/descargarArchivo",
+                data: { url: link},
+                context: this,
+                success: descargarDocumento
+              });*/
     });
 }
 
@@ -267,7 +297,11 @@ function crearDivParaMostrarTextoDocumento(texto){
         width = $(window).width(),
         height = $(window).height(),
         widthElement = width / 3,
-        left = widthElement;
+        left = widthElement,
+        posicionActualTexto = 0,
+        caracteresPorCiclo = 20,
+        lengthTexto = texto.length,
+        interval;
     
     $(divTexto).addClass("divContenedorTextoDocumento");
     $(divTexto).css({"left": left});
@@ -281,8 +315,20 @@ function crearDivParaMostrarTextoDocumento(texto){
     $(parrafoCierre).append(linkCierre);
     $(divTexto).append(parrafoCierre);
     
-    $(parrafo).html(texto);
     $(divTexto).append(parrafo);
+    $(parrafo).text(texto);
     
     $("body").append(divTexto);
+    
+    /*interval = setInterval(function(){
+        
+        if(posicionActualTexto >= lengthTexto){
+            posicionActualTexto = lengthTexto - 1;
+            clearInterval(interval);
+        }
+        
+        $(parrafo).text(texto.substring(posicionActualTexto, caracteresPorCiclo));
+       
+        posicionActualTexto += caracteresPorCiclo;
+    }, 1000/60);*/
 }

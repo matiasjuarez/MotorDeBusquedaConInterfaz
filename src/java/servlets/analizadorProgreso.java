@@ -157,8 +157,9 @@ private static final Directorio carpetaVocabularioTemporal =
     private float calcularProgresoAnalisis(){
         int cantidadDocumentos = contarCantidadDeDocumentosAnalizar();
         int documentosPorLote = configuracion.getCantidadDeDocumentosPorLote();
-
-        int maximaCantidadLotes = cantidadDocumentos/documentosPorLote;
+        
+        Double d = new Double(Math.ceil(cantidadDocumentos/(float)documentosPorLote));
+        int maximaCantidadLotes = d.intValue();
 
         int actualCantidadLotes = contarCantidadLotesAnalizados();
         

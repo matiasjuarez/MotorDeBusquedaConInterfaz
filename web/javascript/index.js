@@ -15,7 +15,16 @@ $(document).ready(function(){
     setWindVolume(0.3);
     
     agregarEventos();
+    
+    agregarBotonPausarAudio();
 });
+
+function agregarBotonPausarAudio(){
+    var pauseButton = new PauseButton(),
+        domElement = pauseButton.getDomElement();
+    
+    $("body").append(domElement);
+}
 
 function setWindVolume(volume){
     var wind = $("#viento"),
@@ -39,8 +48,9 @@ function agregarEventos(){
         $("#botonRearmar").addClass("blinkButton");
     });
     
-    $("#butonConsulta").click(function(){
-        
+    $("#botonConsulta").click(function(){
+        debugger;
+        animarFinConstruccionMotor();
     });
 }
 
@@ -80,6 +90,14 @@ function animarFinOscuridad(){
     $("#videoNieve").removeClass("oculto");
     $("#divOscuridad").removeClass("oscuridadAparece");
     $("#divOscuridad").addClass("oscuridadDesaparece");
+    
+    var interval = setInterval(function(){
+        var opacidad = $("#divOscuridad").css("opacity");
+        if(opacidad == 0){
+            clearInterval(interval);
+            $("#divOscuridad").addClass("oculto");
+        }
+    }, 1000);
 }
 
 
@@ -101,7 +119,8 @@ function obtenerProgreso(){
 function crearBarrarProgreso(){
      var divProgress = document.createElement("div"),
         divBar = document.createElement("div"),
-        divRow = document.createElement("div");
+        divRow = document.createElement("div"),
+        spanTexto = document.createElement("span");
 
         $(divRow).addClass("row");
         $(divRow).attr("id", "divContenedorBarraProgreso");
@@ -111,13 +130,19 @@ function crearBarrarProgreso(){
         $(divProgress).css({"width": (100 + "%"), "padding-right": 0 + "px", "padding-left": 0 + "px"});
         
         
-        $(divBar).addClass("progress-bar progress-bar-striped progress-bar-success active text-size30 text-creepy verticalCenter");
+        $(divBar).addClass("progress-bar progress-bar-striped progress-bar-success active");
+        $(divBar).css({"font-size": "0px"});
         $(divBar).attr("aria-valuemax", 100);
         $(divBar).attr("role", "progressbar");
         $(divBar).attr("id", "barraProgreso");
         $(divBar).css("width", 0 + "%");
         $(divBar).html(0);
         
+        $(spanTexto).attr("id", "textoBarraProgreso");
+        $(spanTexto).addClass("text-size20 text-creepy");
+        $(spanTexto).css({color: "black"});
+        
+        $(divBar).append(spanTexto);
         
         $(divProgress).append(divBar);
         $(divRow).append(divProgress);
@@ -140,7 +165,8 @@ function mostrarProgreso(data){
         etapa = parseInt(data.etapa),
             progreso,
             mensaje,
-            barraProgreso = $("#barraProgreso");
+            barraProgreso = $("#barraProgreso"),
+            spanTextoBarraProgreso = $("#textoBarraProgreso");
     
     if(data.etapa == -1){
         debugger;
@@ -169,13 +195,13 @@ function mostrarProgreso(data){
     $(barraProgreso).css("width", (progreso + "%"));
     
     if(etapa == 0){
-        mensaje = "Analizado: " + progreso.toFixed(2) + "%";
+        mensaje = "ANALIZADO: " + progreso.toFixed(2) + "%";
     }
     else if(etapa == 1 || etapa == -1){
-        mensaje = "Construido: " + progreso.toFixed(2) + "%";
+        mensaje = "CONSTRUIDO: " + progreso.toFixed(2) + "%";
     }
     
-    $(barraProgreso).html(mensaje);
+    $(spanTextoBarraProgreso).html(mensaje);
         
     console.log(mensaje);
 }
@@ -183,6 +209,7 @@ function mostrarProgreso(data){
 function animarFinConstruccionMotor(){
     $("#divOscuridad").removeClass("oscuridadDesaparece");
     $("#divOscuridad").addClass("oscuridadApareceRapido");
+    $("#divOscuridad").removeClass("oculto");
     
     disminuirVolumenGradualmente(3);
     var interval = setInterval(function(){

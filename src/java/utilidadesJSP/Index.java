@@ -54,9 +54,12 @@ public class Index {
         boolean seEncontroPosteoParaCaracterValido = false;
         
         for(int i = 0; i < length; i++){
+            char buscado = caracteres[i];
+            seEncontroPosteoParaCaracterValido = false;
+            
             for(Documento documento: posteos){
                 nombreDocumento = documento.getNombre();
-                if(nombreDocumento.charAt(0) == caracteres[i]){
+                if(nombreDocumento.charAt(0) == buscado){
                     seEncontroPosteoParaCaracterValido = true;
                     break;
                 }
