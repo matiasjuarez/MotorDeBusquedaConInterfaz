@@ -12,7 +12,9 @@ import entidades.documentos.Documento;
 import java.util.ArrayList;
 
 /**
- *
+ * Represente un lote de documentos que se va a analizar e incluye los metodos necesarios
+ * para el analisis asi como para la exportacion del vocabulario, mapeo y posteo generados
+ * para dicho lote
  * @author Matías
  */
 public class AnalisisDocumental {

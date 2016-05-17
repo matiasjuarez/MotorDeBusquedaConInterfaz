@@ -15,7 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- *
+ *  Esta clase transforma los datos de un documento en formato json de modo
+ * que pueda ser tratado con facilidad por javascript
  * @author Matías
  */
 public class DocumentoJSON {

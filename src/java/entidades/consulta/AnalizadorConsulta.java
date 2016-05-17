@@ -62,6 +62,10 @@ public class AnalizadorConsulta {
         return posteosNecesarios;
     }
         
+    // Crea un hashMap que tiene como key un caracter. En dicha key se almacena un ArrayList.
+        // Este arrayList contiene todas las palabras de la consulta que comienzan con esa letra.
+    // Luego se convierte el hashMap en un arraList<ArrayList> en donde cada arrayList interno
+        // contiene al conjunto de palabras que comienzan con una determinada letra
     private ArrayList<ArrayList<String>> separarTerminosPorLetraInicial(ArrayList<String> terminos){
         HashMap palabrasPorLetra = new HashMap(10);
         
@@ -138,6 +142,8 @@ public class AnalizadorConsulta {
                 ArrayList<EntradaVocabularioGeneral> entradasDeVocabulario, 
                 int cantidadDocumentos){
         
+         // Este hashmap guardara todos los documentos que se vayan recuperando
+         // de cada ElementoDePosteo de los distintos posteos
         HashMap documentos = new HashMap(100);
         
         for(Posteo posteo: posteos){
@@ -173,11 +179,18 @@ public class AnalizadorConsulta {
              int cantidadDeDocumentos){
          
             Documento documentoEnTrabajo;
+            
             ArrayList<ElementoListaDePosteo> elementosDePosteo = 
                     listaDePosteo.getElementosDePosteo();
 
             String palabraDeLaLista = listaDePosteo.getPalabra();
 
+            // En la primera parte del for vamos tomando las url de los elemento de posteo
+            // y con dichas url vamos creando objetos documento sobre los que luego
+            // calcularemos el puntaje. Los documentos que se van creando se guardan
+            // en un hashMap que es pasado por parametro. Dicho hashMap usa como key
+            // la url del documento. De este modo si el documento existe en el hashmap
+            // lo obtenemos y procedemos a adicionarle mas puntaje cuando corresponda
             for(ElementoListaDePosteo elementoPosteo: elementosDePosteo) {
                 int URLmap = Integer.parseInt(elementoPosteo.getURLDocumento());
                 String URL = mapeador.getURLUnmapping(URLmap);
@@ -194,6 +207,9 @@ public class AnalizadorConsulta {
                 }
 
                 if(documentoEnTrabajo != null){
+                    // se pasa como parametro la palabraDeLaLista de posteo. Observar
+                    // que se hace esto para cada elementoDePosteo(ver el ciclo for que anida
+                    // esta porcion de codigo)
                     adicionarPuntajeADocumentoCorrespondienteAElementoDePosteo(
                             documentoEnTrabajo, entradasDeVocabulario, 
                             palabraDeLaLista, elementoPosteo, cantidadDeDocumentos);
@@ -204,13 +220,15 @@ public class AnalizadorConsulta {
      
      // Cada elemento de una lista de posteo va a tener una referencia a una URL de un documento.
      // Los elementos de la lista son los mas relevantes para la consulta
+     // @palabraDeLaLista es la palabra de una lista de posteo
     private void adicionarPuntajeADocumentoCorrespondienteAElementoDePosteo(Documento documento, 
             ArrayList<EntradaVocabularioGeneral> entradasDeVocabulario,
             String palabraDeLaLista, ElementoListaDePosteo elementoPosteo,
             int cantidadDocumentos){
         
         double puntajeAdicional = 0;
-
+        
+        // Comparamos cada entrada del vocabulario con cada palabra 
         for(EntradaVocabularioGeneral entrada: entradasDeVocabulario){
             if(entrada.getPalabra().equals(palabraDeLaLista)){
                 int frecuenciaPosteo = elementoPosteo.getFrecuencia();

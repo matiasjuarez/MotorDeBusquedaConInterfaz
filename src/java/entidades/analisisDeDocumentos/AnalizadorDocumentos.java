@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 
 /**
- *
+ *  Inicia el procesamiento de los documentos que se encuentran en un directorio dado
  * @author Matías
  */
 public class AnalizadorDocumentos {
@@ -28,6 +28,8 @@ public class AnalizadorDocumentos {
     
     public static void procesarDocumentosDeDirectorio(String URLDirectorio, HttpSession session){
         try {
+            // Se arma la estructura del directorio que se va a procesar y se divide
+            // a los documentos encontrados en una serie de lotes mas pequeños
             Directorio directorio = new Directorio(URLDirectorio);
             directorio.armarEstructuraDelDirectorio();
             ArrayList<Documento> documentos = directorio.getDocumentos();
@@ -51,6 +53,7 @@ public class AnalizadorDocumentos {
         
     }
     
+    // Une los archivos generados para cada lote con el archivo principal
     private static void unirArchivosTemporales(){
         // VOCABULARIO
         VocabularioGeneral vocabulario = unirVocabulariosTemporalesConVocabularioPrincipal();
@@ -120,6 +123,9 @@ public class AnalizadorDocumentos {
         return mapeador;
     }
     
+    // Si no existe el vocabulario principal en la url especificada por el archivo de configuracion, 
+    // entonces se toma alguno de los vocabularios temporales y se lo designa como principal, copiandolo
+    // en la url del vocabulario principal especificada en configuracion
     private static VocabularioGeneral obtenerVocabularioPrincipal(ArrayList<Documento> vocabularios) throws IOException{
 
         String URLVocabulario = configuracion.getURLVocabularioGeneral();
@@ -211,7 +217,8 @@ public class AnalizadorDocumentos {
             Directorio directorio = new Directorio(configuracion.getCarpetaVocabulariosTemporales());
             directorio.armarEstructuraDelDirectorio();
             ArrayList<Documento> vocabularios = directorio.getDocumentos();
-        
+            
+            
             VocabularioGeneral vocabularioPrincipal = obtenerVocabularioPrincipal(vocabularios);
             
             for(Documento documento: vocabularios){
