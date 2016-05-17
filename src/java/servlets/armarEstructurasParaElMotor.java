@@ -47,6 +47,8 @@ public class armarEstructurasParaElMotor extends HttpServlet {
         HttpSession session = request.getSession();
         
         if(!analisisEnCurso){
+            session.setAttribute("vocabulario", null);
+            session.setAttribute("mapeador", null);
             
             analisisEnCurso = true;
             

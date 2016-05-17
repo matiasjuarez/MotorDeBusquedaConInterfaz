@@ -8,6 +8,7 @@ package servlets;
 import entidades.documentos.Documento;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,16 +33,7 @@ public class lectorDocumento extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
         
-        String URLDocumento = (String) request.getParameter("URL");
-        
-        Documento documento = new Documento(URLDocumento);
-        documento.leerTextoDesdeArchivo();
-        
-        PrintWriter pw = response.getWriter(); 
-        pw.print(documento.getTextoDelDocumento());
-        pw.close();
     }
     
 
@@ -57,7 +49,20 @@ public class lectorDocumento extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        String URLDocumento = (String) request.getParameter("URL");
+        
+        Documento documento = new Documento(URLDocumento);
+        documento.leerTextoDesdeArchivo();
+        
+        request.setAttribute("textoDocumento", documento.getTextoDelDocumento());
+        request.setAttribute("URL", URLDocumento);
+        
+        RequestDispatcher dispatcher = 
+                getServletContext().getRequestDispatcher("/VistaDocumento.jsp");
+        
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -71,7 +76,16 @@ public class lectorDocumento extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        String URLDocumento = (String) request.getParameter("URL");
+        
+        Documento documento = new Documento(URLDocumento);
+        documento.leerTextoDesdeArchivo();
+        
+        PrintWriter pw = response.getWriter(); 
+        pw.print(documento.getTextoDelDocumento());
+        pw.close();
     }
 
     /**

@@ -41,6 +41,11 @@
             </div>
         </div>
         
+        <form id="formOculto" action="/MotorDeBusqueda/lectorDocumento" method="GET" class="oculto">
+            <input type="hidden" name="URL" id="formOcultoURL"/>
+            <input type="submit" id="formOcultoSubmit" />
+        </form>
+        
         <div class="container" id="divContainer">
             
             <%-- Titulo --%>

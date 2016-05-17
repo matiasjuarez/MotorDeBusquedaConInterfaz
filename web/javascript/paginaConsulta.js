@@ -269,15 +269,38 @@ function agregarNuevaFilaParaDocumento(JSONData){
 
 function agregarEventoSobreLinksDocumentos(){
     
-    $("body").on("click", ".linkDocumento", function(event){
+    $("body").on("mousedown", ".linkDocumento", function(event){
+ 
        event.preventDefault();
+       debugger;
        var link = $(this).attr('href');
        
-       
-       $.post("/MotorDeBusqueda/lectorDocumento", { "URL": link})
+       if(event.button === 0){
+           /*$.post("/MotorDeBusqueda/lectorDocumento", { "URL": link})
                     .done(function (data) {
                         crearDivParaMostrarTextoDocumento(data);         
-            });
+            });*/
+            $.ajax({
+                type: "POST",
+                url: "/MotorDeBusqueda/lectorDocumento",
+                data: { URL: link},
+                context: this,
+                success: crearDivParaMostrarTextoDocumento
+              });
+       }
+       else if(event.button === 2){
+           $("#formOcultoURL").val(link);
+           $('#formOculto').trigger('submit');
+           /*$.ajax({
+                type: "GET",
+                url: "/MotorDeBusqueda/lectorDocumento",
+                contentType: "charset=utf-8",
+                async: false,
+                data: { URL: link}
+                
+              });*/
+       }
+       
             /*
         $.ajax({
                 type: "POST",
@@ -286,6 +309,10 @@ function agregarEventoSobreLinksDocumentos(){
                 context: this,
                 success: descargarDocumento
               });*/
+    });
+    
+    $("body").on("contextmenu", ".linkDocumento", function(event){
+        return false;
     });
 }
 
